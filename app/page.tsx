@@ -19,11 +19,16 @@ export default function Home() {
       const res = await fetch(`/api/weather?q=${encodeURIComponent(q)}`);
       const json: WeatherPayload = await res.json();
       setData(json);
-    } catch {
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Network error.";
       setData({
         location: q,
         weather: null,
-        error: "Network error. Try again.",
+        error:
+          message.toLowerCase().includes("fetch")
+            ? "Could not reach the app. If you're running locally, start the dev server (npm run dev) and open http://localhost:3000."
+            : `${message} Try again.`,
       });
     } finally {
       setLoading(false);
